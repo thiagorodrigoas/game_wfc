@@ -29,7 +29,7 @@ class GameState(State):
         for _ in range(5):  # Cria 5 inimigos
             x = random.randint(0, 760)
             y = random.randint(0, 560)
-            self.enemies.add(Enemy(x, y))  # Adiciona os inimigos ao grupo
+            self.enemies.add(Enemy(x, y, exp_value=1))  # Adiciona os inimigos ao grupo
 
     def update(self, dt):
         keys = pygame.key.get_pressed()  # Captura as teclas pressionadas
@@ -65,6 +65,9 @@ class GameState(State):
         for projectile, enemies_hit in collisions.items():
             for enemy in enemies_hit:
                 enemy.take_damage(projectile.damage)  # Aplica o dano do projétil ao inimigo
+                if enemy.hp < projectile.damage:
+                    enemy.die()
+                    self.player.gain_exp(enemy.exp_value)
                 # Verifique se o inimigo morreu como resultado do dano dentro do método take_damage
 
         
@@ -73,13 +76,17 @@ class GameState(State):
         surface.fill(self.bg_color)  # Preenche o fundo com a cor cinza
         self.player.draw(surface)# Desenha o personagem 
         self.player.draw_health_bar(surface)  # Desenha a barra de vida do jogador
+
+        # Agora desenha a barra de experiência do jogador
+        screen_width = surface.get_width()
+        exp_bar_height = 20  # Altura da barra de experiência
+        self.player.draw_exp_bar(surface, 0, surface.get_height() - exp_bar_height, screen_width, exp_bar_height)
         
         self.enemies.draw(surface)  # Desenha todos os inimigos
         self.projectiles.draw(surface)  # Desenha os projéteis na tela
 
         for enemy in self.enemies:
             enemy.draw_health_bar(surface)  # Desenha a barra de vida de cada inimigo
-
     def exit(self):
         # Desativa o timer ao sair do GameState
         pygame.time.set_timer(ENEMY_SPAWN_EVENT, 0)
