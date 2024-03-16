@@ -41,11 +41,23 @@ class GameState(State):
                 self.add_enemies()
 
         self.enemies.update()  # Atualiza o inimigo
-        
+
+
+        # Detecta colisões entre o jogador e os inimigos
+        if pygame.sprite.spritecollide(self.player, self.enemies, False):
+            self.player.take_damage(10)  # Aplica uma quantidade fixa de dano. Ajuste conforme necessário.
+            # Verifica se o jogador morreu
+            if self.player.hp <= 0:
+                self.player.die()
+                self.exit()
+                self.game.change_state('game_over')  # Altera para o estado de Game Over
+
+
         # Verifica se há colisão entre o jogador e qualquer inimigo
-        if pygame.sprite.spritecollideany(self.player, self.enemies):
-            self.exit()
-            self.game.change_state('game_over')  # Altera para o estado de Game Over
+        # if pygame.sprite.spritecollideany(self.player, self.enemies):
+        #     self.exit()
+        #     self.game.change_state('game_over')  # Altera para o estado de Game Over
+
 
 
         # Captura o evento de clique do mouse para disparar

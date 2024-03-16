@@ -17,7 +17,6 @@ class Enemy(pygame.sprite.Sprite):
         self.exp_value = exp_value  # Quantidade de experiência que o inimigo fornece
 
 
-
     def draw_health_bar(self, surface):
         health_ratio = self.hp / self.max_hp
         pygame.draw.rect(surface, (255,0,0), (self.rect.x, self.rect.y - 10, self.rect.width, 5))
@@ -47,4 +46,3 @@ class Enemy(pygame.sprite.Sprite):
         """Lida com a morte do inimigo."""
         print("Inimigo morreu!")
         self.kill()  # Remove o inimigo do grupo de sprites
-        
