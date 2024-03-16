@@ -1,7 +1,7 @@
 import pygame
 
 class Projectile(pygame.sprite.Sprite):
-    def __init__(self, start_pos, target_pos):
+    def __init__(self, start_pos, target_pos, damage):
         super().__init__()
         self.image = pygame.Surface((10, 5))
         self.image.fill((0, 0, 255))  # Cor azul
@@ -13,7 +13,9 @@ class Projectile(pygame.sprite.Sprite):
         self.direction = pygame.math.Vector2(x_diff, y_diff).normalize()
 
         self.speed = 5
-
+        self.damage = damage  # Armazena o dano que o projétil inflige
+    
+    
     def update(self):
         # Move o projétil na direção calculada
         self.rect.x += self.direction.x * self.speed

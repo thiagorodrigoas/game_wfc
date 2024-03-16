@@ -51,23 +51,35 @@ class GameState(State):
         # Captura o evento de clique do mouse para disparar
         if pygame.mouse.get_pressed()[0]:  # Se o botão esquerdo do mouse foi pressionado
             mouse_pos = pygame.mouse.get_pos()
-            new_projectile = Projectile(self.player.rect.center, mouse_pos)
+            new_projectile = Projectile(self.player.rect.center, mouse_pos, damage=2)
             self.projectiles.add(new_projectile)
 
         # Atualiza os projéteis
         self.projectiles.update()
 
         # Detecção de colisão entre projéteis e inimigos
-        pygame.sprite.groupcollide(self.projectiles, self.enemies, True, True)
+        #pygame.sprite.groupcollide(self.projectiles, self.enemies, True, True)
+
+        # Verificação de colisão entre projéteis e inimigos
+        collisions = pygame.sprite.groupcollide(self.projectiles, self.enemies, True, False)
+        for projectile, enemies_hit in collisions.items():
+            for enemy in enemies_hit:
+                enemy.take_damage(projectile.damage)  # Aplica o dano do projétil ao inimigo
+                # Verifique se o inimigo morreu como resultado do dano dentro do método take_damage
 
         
 
     def draw(self, surface):
         surface.fill(self.bg_color)  # Preenche o fundo com a cor cinza
         self.player.draw(surface)# Desenha o personagem 
+        self.player.draw_health_bar(surface)  # Desenha a barra de vida do jogador
+        
         self.enemies.draw(surface)  # Desenha todos os inimigos
         self.projectiles.draw(surface)  # Desenha os projéteis na tela
-    
+
+        for enemy in self.enemies:
+            enemy.draw_health_bar(surface)  # Desenha a barra de vida de cada inimigo
+
     def exit(self):
         # Desativa o timer ao sair do GameState
         pygame.time.set_timer(ENEMY_SPAWN_EVENT, 0)
